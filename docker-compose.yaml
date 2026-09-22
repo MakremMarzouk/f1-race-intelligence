@@ -5,8 +5,10 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app/app
+      - ./f1_cache:/app/f1_cache
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      F1_CACHE_DIR: /app/f1_cache
     depends_on:
       db:
         condition: service_healthy

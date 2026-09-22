@@ -9,3 +9,6 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Downloaded FastF1 provider cache
+f1_cache/
