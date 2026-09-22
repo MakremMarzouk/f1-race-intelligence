@@ -21,7 +21,7 @@
 - [x] Added `GET /races/{year}/{round_number}/results`
 - [x] Verified the endpoint through Docker
 - [x] Added a provider-service unit test
-- [ ] Commit Phase 2
+- [x] Commit Phase 2
 
 ## Next: Phase 3 — Race Intelligence
 
