@@ -10,7 +10,7 @@
 - [x] Added n8n through Docker Compose
 - [x] Protected local secrets with `.env` and `.gitignore`
 - [x] Added the first automated API test
-- [ ] Commit Phase 1
+- [x] Commit Phase 1
 
 ## Next: Phase 2 — F1 Data
 
