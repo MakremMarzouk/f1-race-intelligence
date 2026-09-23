@@ -1,7 +1,5 @@
 from unittest.mock import patch
-
 import pandas as pd
-
 from app.services.f1_service import F1DataService
 
 
