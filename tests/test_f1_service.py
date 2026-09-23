@@ -26,6 +26,17 @@ class FakeSession:
         ]
     )
 
+    laps = pd.DataFrame(
+        [
+            {
+                "Driver": "TST",
+                "LapTime": pd.Timedelta(92608, unit="ms"),
+                "Deleted": False,
+                "FastF1Generated": False,
+            }
+        ]
+    )
+
     def load(self, **kwargs):
         self.load_arguments = kwargs
 
@@ -45,7 +56,7 @@ def test_get_race_results_normalizes_fastf1_data(tmp_path):
 
     get_session.assert_called_once_with(2024, 1, "R")
     assert session.load_arguments == {
-        "laps": False,
+        "laps": True,
         "telemetry": False,
         "weather": False,
         "messages": False,
@@ -67,6 +78,7 @@ def test_get_race_results_normalizes_fastf1_data(tmp_path):
                 "finish_position": 1,
                 "status": "Finished",
                 "points": 25.0,
+                "fastest_lap_ms": 92608,
             }
         ],
     }

@@ -23,8 +23,20 @@
 - [x] Added a provider-service unit test
 - [x] Commit Phase 2
 
-## Next: Phase 3 — Race Intelligence
+## Phase 3 — Race Intelligence
 
-- Calculate deterministic race insights
-- Add tests for every calculation
-- Keep AI and n8n out of the calculation layer
+- [x] Loaded the valid per-driver fastest lap from FastF1 lap data
+- [x] Created `app/services/analysis_service.py`
+- [x] Calculated winner, podium, and position changes
+- [x] Calculated biggest mover and fastest lap
+- [x] Calculated DNFs, driver points, and constructor points
+- [x] Added `GET /races/{year}/{round_number}/analysis`
+- [x] Tested analysis with classified and DNF race examples
+- [x] Added deterministic analysis unit tests
+- [ ] Commit Phase 3
+
+## Next: Phase 4 — Persistence
+
+- Add SQLAlchemy models for races, drivers, race results, and automation runs
+- Persist analyzed race data
+- Prevent duplicate race ingestion

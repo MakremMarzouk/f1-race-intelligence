@@ -28,11 +28,13 @@ class F1DataService:
 
         session = fastf1.get_session(year, round_number, "R")
         session.load(
-            laps=False,
+            laps=True,
             telemetry=False,
             weather=False,
             messages=False,
         )
+
+        fastest_lap_times = self._fastest_lap_times_by_driver(session.laps)
 
         if session.results.empty:
             raise ValueError(
@@ -60,6 +62,9 @@ class F1DataService:
                     ),
                     "status": str(result["Status"]),
                     "points": float(result["Points"]),
+                    "fastest_lap_ms": fastest_lap_times.get(
+                         str(result["Abbreviation"])
+                    ),
                 }
                 for _, result in session.results.iterrows()
             ],
@@ -77,3 +82,18 @@ class F1DataService:
             return int(value)
         except (TypeError, ValueError):
             return None
+
+    @staticmethod
+    def _fastest_lap_times_by_driver(laps: Any) -> dict[str, int]:
+        valid_laps = laps[
+            laps["LapTime"].notna()
+            & ~laps["Deleted"].fillna(False)
+            & ~laps["FastF1Generated"].fillna(False)
+        ]
+
+        return {
+            str(driver): int(lap_time.total_seconds() * 1000)
+            for driver, lap_time in valid_laps.groupby("Driver")[
+                "LapTime"
+            ].min().items()
+        }
