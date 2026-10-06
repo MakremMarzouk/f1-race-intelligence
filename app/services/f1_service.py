@@ -1,8 +1,10 @@
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import fastf1
+from fastf1.exceptions import DataNotLoadedError
 
 
 class F1DataService:
@@ -19,6 +21,48 @@ class F1DataService:
 
         fastf1.Cache.enable_cache(str(self.cache_dir))
 
+    def get_latest_completed_race(
+        self,
+        year: int | None = None,
+        now: datetime | None = None,
+    ) -> dict[str, Any]:
+        selected_year = year or datetime.now(timezone.utc).year
+        current_time = now or datetime.now(timezone.utc)
+
+        if current_time.tzinfo is not None:
+            current_time = current_time.astimezone(
+                timezone.utc
+            ).replace(tzinfo=None)
+
+        schedule = fastf1.get_event_schedule(
+            selected_year,
+            include_testing=False,
+        )
+
+        completed_races = schedule[
+            (schedule["RoundNumber"] > 0)
+            & schedule["Session5DateUtc"].notna()
+            & (schedule["Session5DateUtc"] < current_time)
+        ]
+
+        if completed_races.empty:
+            raise ValueError(
+                f"No completed races found for year={selected_year}."
+            )
+
+        event = completed_races.sort_values(
+            "Session5DateUtc"
+        ).iloc[-1]
+
+        return {
+            "year": selected_year,
+            "round": int(event["RoundNumber"]),
+            "name": str(event["EventName"]),
+            "location": str(event["Location"]),
+            "country": str(event["Country"]),
+            "race_start_utc": event["Session5DateUtc"].isoformat(),
+        }
+
     def get_race_results(
         self,
         year: int,
@@ -34,7 +78,10 @@ class F1DataService:
             messages=False,
         )
 
-        fastest_lap_times = self._fastest_lap_times_by_driver(session.laps)
+        try:
+            fastest_lap_times = self._fastest_lap_times_by_driver(session.laps)
+        except DataNotLoadedError:
+            fastest_lap_times = {}
 
         if session.results.empty:
             raise ValueError(

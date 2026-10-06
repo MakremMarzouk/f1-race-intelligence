@@ -47,8 +47,15 @@
 - [x] Verified duplicate prevention with a second ingestion request
 - [x] Commit Phase 4
 
-## Next: Phase 5 — n8n Orchestration
+## Phase 5 — n8n Orchestration
 
-- Build an n8n workflow that calls the FastAPI ingestion endpoint
-- Add manual trigger and response validation
-- Add retry and failure branches
+- [x] Add `GET /races/latest-completed` with optional season selection
+- [x] Select the latest completed race dynamically from the FastF1 schedule
+- [x] Continue race ingestion when optional lap timing data is unavailable
+- [x] Add an n8n manual workflow that looks up and ingests the selected race
+- [x] Validate the ingestion response and route lookup failures to Stop and Error
+- [x] Export the n8n workflow to `workflows/f1_race_workflow.json`
+- [x] Add tests for latest-race selection and missing lap timing
+- [x] Verify a live dynamic ingestion through n8n
+- [x] Add retry and failure handling to the ingestion node
+- [x] Commit Phase 5

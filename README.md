@@ -4,7 +4,7 @@ A local automation system that retrieves completed Formula 1 race data, calculat
 
 ## Current status
 
-Phase 4 complete: deterministic race intelligence and PostgreSQL persistence are available through the FastAPI service. PostgreSQL and n8n run locally through Docker Compose.
+Phase 5 complete: the latest completed race can be selected dynamically and ingested through n8n. Race results are stored in PostgreSQL.
 
 ## Architecture
 
@@ -44,15 +44,20 @@ Python will calculate race facts. AI will only explain validated facts. n8n will
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/health` | Confirms the API is running. |
+| `GET` | `/races/latest-completed` | Finds the latest completed race for the current year; an optional `year` query parameter selects a season. |
 | `GET` | `/races/{year}/{round_number}/results` | Retrieves and normalizes completed race results through FastF1. |
 | `GET` | `/races/{year}/{round_number}/analysis` | Returns deterministic race facts: winner, podium, position changes, biggest mover, fastest lap, DNFs, and points. |
 | `POST` | `/races/{year}/{round_number}/ingest` | Retrieves and persists race results. Repeated calls for the same season and round do not create duplicate records. |
 
 FastF1 provider downloads are cached locally in `f1_cache/`. The cache is ignored by Git and mounted into the API container so it survives container rebuilds.
 
+The manual n8n workflow in `workflows/f1_race_workflow.json` looks up the latest completed race, builds its ingestion URL from the returned year and round, and validates the API response. It can be run from the n8n editor with **Execute workflow**.
+
 Race calculations are isolated in `RaceAnalysisService`. This service receives normalized dictionaries, makes no network calls, and never uses AI.
 
 Race persistence is isolated in `RacePersistenceService`. It stores races, drivers, and race results in PostgreSQL, while `automation_runs` is reserved for workflow tracking in a later phase.
+
+Race results remain available when FastF1 cannot load lap timing; in that case `fastest_lap_ms` is `null`.
 
 ## Run tests
 
