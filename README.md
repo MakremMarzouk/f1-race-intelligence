@@ -4,7 +4,7 @@ A local automation system that retrieves completed Formula 1 race data, calculat
 
 ## Current status
 
-Phase 3 complete: deterministic race intelligence is available through the FastAPI service. PostgreSQL and n8n run locally through Docker Compose.
+Phase 4 complete: deterministic race intelligence and PostgreSQL persistence are available through the FastAPI service. PostgreSQL and n8n run locally through Docker Compose.
 
 ## Architecture
 
@@ -46,10 +46,13 @@ Python will calculate race facts. AI will only explain validated facts. n8n will
 | `GET` | `/health` | Confirms the API is running. |
 | `GET` | `/races/{year}/{round_number}/results` | Retrieves and normalizes completed race results through FastF1. |
 | `GET` | `/races/{year}/{round_number}/analysis` | Returns deterministic race facts: winner, podium, position changes, biggest mover, fastest lap, DNFs, and points. |
+| `POST` | `/races/{year}/{round_number}/ingest` | Retrieves and persists race results. Repeated calls for the same season and round do not create duplicate records. |
 
 FastF1 provider downloads are cached locally in `f1_cache/`. The cache is ignored by Git and mounted into the API container so it survives container rebuilds.
 
 Race calculations are isolated in `RaceAnalysisService`. This service receives normalized dictionaries, makes no network calls, and never uses AI.
+
+Race persistence is isolated in `RacePersistenceService`. It stores races, drivers, and race results in PostgreSQL, while `automation_runs` is reserved for workflow tracking in a later phase.
 
 ## Run tests
 

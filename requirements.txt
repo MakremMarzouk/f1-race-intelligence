@@ -3,3 +3,6 @@ uvicorn[standard]
 pytest
 httpx
 fastf1
+sqlalchemy
+psycopg2-binary
+pydantic-settings

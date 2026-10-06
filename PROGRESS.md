@@ -35,8 +35,20 @@
 - [x] Added deterministic analysis unit tests
 - [x] Commit Phase 3
 
-## Next: Phase 4 — Persistence
+## Phase 4 — Persistence
 
-- Add SQLAlchemy models for races, drivers, race results, and automation runs
-- Persist analyzed race data
-- Prevent duplicate race ingestion
+- [x] Added SQLAlchemy and PostgreSQL configuration
+- [x] Created `races`, `drivers`, `race_results`, and `automation_runs` tables
+- [x] Added automatic table creation when FastAPI starts
+- [x] Created `RacePersistenceService`
+- [x] Added `POST /races/{year}/{round_number}/ingest`
+- [x] Added persistence and duplicate-ingestion tests
+- [x] Verified live ingestion into PostgreSQL
+- [x] Verified duplicate prevention with a second ingestion request
+- [x] Commit Phase 4
+
+## Next: Phase 5 — n8n Orchestration
+
+- Build an n8n workflow that calls the FastAPI ingestion endpoint
+- Add manual trigger and response validation
+- Add retry and failure branches
