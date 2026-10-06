@@ -4,13 +4,13 @@ A local automation system that retrieves completed Formula 1 race data, calculat
 
 ## Current status
 
-Phase 5 complete: the latest completed race can be selected dynamically and ingested through n8n. Race results are stored in PostgreSQL.
+Phase 6 complete: n8n dynamically selects and ingests the latest completed race, then requests a concise local Ollama briefing based on Python's race analysis.
 
 ## Architecture
 
 ```text
 n8n → FastAPI → FastF1
-       │
+       ├──────→ Ollama
        └──────→ PostgreSQL
 ```
 
@@ -47,15 +47,18 @@ Python will calculate race facts. AI will only explain validated facts. n8n will
 | `GET` | `/races/latest-completed` | Finds the latest completed race for the current year; an optional `year` query parameter selects a season. |
 | `GET` | `/races/{year}/{round_number}/results` | Retrieves and normalizes completed race results through FastF1. |
 | `GET` | `/races/{year}/{round_number}/analysis` | Returns deterministic race facts: winner, podium, position changes, biggest mover, fastest lap, DNFs, and points. |
+| `GET` | `/races/{year}/{round_number}/briefing` | Uses the local Ollama model to write a concise briefing from the race analysis. |
 | `POST` | `/races/{year}/{round_number}/ingest` | Retrieves and persists race results. Repeated calls for the same season and round do not create duplicate records. |
 
 FastF1 provider downloads are cached locally in `f1_cache/`. The cache is ignored by Git and mounted into the API container so it survives container rebuilds.
 
-The manual n8n workflow in `workflows/f1_race_workflow.json` looks up the latest completed race, builds its ingestion URL from the returned year and round, and validates the API response. It can be run from the n8n editor with **Execute workflow**.
+The manual n8n workflow in `workflows/f1_race_workflow.json` looks up the latest completed race, ingests it, requests a briefing using the returned year and round, and validates the API response. It can be run from the n8n editor with **Execute workflow**.
 
 Race calculations are isolated in `RaceAnalysisService`. This service receives normalized dictionaries, makes no network calls, and never uses AI.
 
 Race persistence is isolated in `RacePersistenceService`. It stores races, drivers, and race results in PostgreSQL, while `automation_runs` is reserved for workflow tracking in a later phase.
+
+`OllamaBriefingService` sends deterministic race analysis to the local `llama3.2` model. It asks the model to explain supplied facts without inventing causes, statistics, or predictions.
 
 Race results remain available when FastF1 cannot load lap timing; in that case `fastest_lap_ms` is `null`.
 

@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from sqlalchemy.orm import Session
-
+from app.services.briefing_service import OllamaBriefingService
 from app.services.analysis_service import RaceAnalysisService
 from app.database.db import get_db
 from app.services.f1_service import F1DataService
@@ -74,6 +74,32 @@ def get_race_analysis(
             detail="Race analysis could not be completed.",
         )
 
+@router.get("/{year}/{round_number}/briefing")
+def get_race_briefing(
+    year: int = Path(ge=2018),
+    round_number: int = Path(ge=1),
+):
+    try:
+        race_data = F1DataService().get_race_results(year, round_number)
+        analysis = RaceAnalysisService().analyze(race_data)
+        briefing = OllamaBriefingService().generate_briefing(analysis)
+
+        return {
+            "race": analysis["race"],
+            "briefing": briefing,
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except Exception:
+        logger.exception(
+            "Could not generate briefing for year=%s round=%s",
+            year,
+            round_number,
+        )
+        raise HTTPException(
+            status_code=502,
+            detail="Race briefing could not be generated.",
+        )
 
 @router.post("/{year}/{round_number}/ingest")
 def ingest_race(

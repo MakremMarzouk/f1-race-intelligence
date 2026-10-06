@@ -47,13 +47,14 @@
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        608,
-        -96
+        768,
+        -224
       ],
       "id": "b53929fa-0bea-4bb8-8998-c2c467fa3cc8",
       "name": "Ingestion Succeeded"
@@ -65,8 +66,8 @@
       "type": "n8n-nodes-base.stopAndError",
       "typeVersion": 1,
       "position": [
-        608,
-        80
+        576,
+        128
       ],
       "id": "16740cd2-18a3-4cad-892a-149fe04f4eff",
       "name": "Invalid Ingestion Response"
@@ -116,7 +117,6 @@
       "id": "8de021dc-5960-4f35-a664-4d605e50a934",
       "name": "Ingest Selected Race",
       "retryOnFail": true,
-      "maxTries": 3,
       "waitBetweenTries": 2000,
       "onError": "continueErrorOutput"
     },
@@ -131,7 +131,9 @@
         272
       ],
       "id": "fc29a922-5bae-4c84-855d-bdc79a5e2ab1",
-      "name": "Latest Race Lookup Failed"
+      "name": "Latest Race Lookup Failed",
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
     },
     {
       "parameters": {
@@ -145,6 +147,36 @@
       ],
       "id": "c8ea732d-f75c-44af-8666-770724300e46",
       "name": "Race Ingestion Failed."
+    },
+    {
+      "parameters": {
+        "errorMessage": "Ollama briefing generation failed after three attempts."
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        768,
+        16
+      ],
+      "id": "abe95961-db61-44d2-8d20-ffadd83403bc",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "url": "={{ 'http://host.docker.internal:8000/races/' + $json.race.year + '/' + $json.race.round + '/briefing' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        576,
+        -112
+      ],
+      "id": "81462c14-0cca-4ff8-ae73-8d959c8e59e4",
+      "name": "Generate Race Briefing",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {},
@@ -153,7 +185,7 @@
       "main": [
         [
           {
-            "node": "Ingestion Succeeded",
+            "node": "Generate Race Briefing",
             "type": "main",
             "index": 0
           }
@@ -213,6 +245,24 @@
           }
         ]
       ]
+    },
+    "Generate Race Briefing": {
+      "main": [
+        [
+          {
+            "node": "Ingestion Succeeded",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -220,7 +270,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "6f953d0b-d611-4c8f-bf58-e3e4232b155d",
+  "versionId": "1f8ab695-da34-4252-9e5c-b6040f91a905",
   "meta": {
     "instanceId": "aa920821cc0b58f3e2bef7ed66f2939b6acfef6ad537fe251f90cd4292980b19"
   },

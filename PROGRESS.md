@@ -59,3 +59,20 @@
 - [x] Verify a live dynamic ingestion through n8n
 - [x] Add retry and failure handling to the ingestion node
 - [x] Commit Phase 5
+
+## Phase 6 — AI Race Briefing
+
+- [x] Configure the local Ollama URL and `llama3.2` model
+- [x] Create `OllamaBriefingService` using grounded, concise instructions
+- [x] Add `GET /races/{year}/{round_number}/briefing`
+- [x] Add a mocked service test so tests do not call Ollama
+- [x] Extend the n8n workflow to request a briefing for the selected race
+- [x] Preserve the generated briefing in the workflow success output
+- [x] Verify a live 2026 race briefing through FastAPI and n8n
+- [x] Run the test suite (8 passed)
+- [x] Commit Phase 6
+
+## Next: Phase 7 — Telegram Delivery
+
+- Send the generated race briefing to a Telegram chat through n8n
+- Store Telegram credentials outside source control
