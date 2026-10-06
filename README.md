@@ -4,14 +4,15 @@ A local automation system that retrieves completed Formula 1 race data, calculat
 
 ## Current status
 
-Phase 6 complete: n8n dynamically selects and ingests the latest completed race, then requests a concise local Ollama briefing based on Python's race analysis.
+Phase 7 complete: n8n dynamically selects and ingests the latest completed race, requests a concise local Ollama briefing based on Python's race analysis, and sends it to a Telegram chat.
 
 ## Architecture
 
 ```text
 n8n → FastAPI → FastF1
-       ├──────→ Ollama
-       └──────→ PostgreSQL
+ │     ├──────→ Ollama
+ │     └──────→ PostgreSQL
+ └────────────→ Telegram
 ```
 
 Python will calculate race facts. AI will only explain validated facts. n8n will orchestrate the workflow.
@@ -52,7 +53,7 @@ Python will calculate race facts. AI will only explain validated facts. n8n will
 
 FastF1 provider downloads are cached locally in `f1_cache/`. The cache is ignored by Git and mounted into the API container so it survives container rebuilds.
 
-The manual n8n workflow in `workflows/f1_race_workflow.json` looks up the latest completed race, ingests it, requests a briefing using the returned year and round, and validates the API response. It can be run from the n8n editor with **Execute workflow**.
+The manual n8n workflow in `workflows/f1_race_workflow.json` looks up the latest completed race, ingests it, requests a briefing using the returned year and round, validates the API response, and sends the briefing to Telegram after success. It can be run from the n8n editor with **Execute workflow**. The Telegram bot token is stored as an n8n credential, not in the project files. The exported workflow contains the configured chat ID; remove or replace it before sharing the export if you do not want to disclose that identifier.
 
 Race calculations are isolated in `RaceAnalysisService`. This service receives normalized dictionaries, makes no network calls, and never uses AI.
 

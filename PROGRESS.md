@@ -72,7 +72,15 @@
 - [x] Run the test suite (8 passed)
 - [x] Commit Phase 6
 
-## Next: Phase 7 — Telegram Delivery
+## Phase 7 — Telegram Delivery
 
-- Send the generated race briefing to a Telegram chat through n8n
-- Store Telegram credentials outside source control
+- [x] Create a Telegram bot and configure its token as an n8n credential
+- [x] Send the generated briefing to the user's Telegram chat after successful workflow completion
+- [x] Export the updated workflow to `workflows/f1_race_workflow.json`
+- [x] Verify an end-to-end Telegram delivery
+- [x] Run the test suite (8 passed, 2 dependency deprecation warnings)
+
+## Next: Phase 8 — Review and polish
+
+- Review the complete workflow and project documentation
+- Decide whether to keep or remove the Telegram chat ID from the exported workflow before sharing it
