@@ -19,15 +19,26 @@ Python will calculate race facts. AI will only explain validated facts. n8n will
 
 ## Run locally
 
-1. Copy the environment template:
+1. Install and open [Ollama for macOS](https://ollama.com/download), if needed.
+
+2. Download the model configured by default in this project:
+
+   ```bash
+   ollama pull llama3.2
+   ollama list
+   ```
+
+   Keep Ollama running while using the app. The Dockerized API reaches Ollama on your Mac through `host.docker.internal:11434`.
+
+3. Copy the environment template:
 
    ```bash
    cp .env.example .env
    ```
 
-2. Set a local PostgreSQL password and random n8n encryption key in `.env`.
+4. Set a local PostgreSQL password and random n8n encryption key in `.env`.
 
-3. Start the services:
+5. Start the Docker services:
 
    ```bash
    docker compose up --build -d

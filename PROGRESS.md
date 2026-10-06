@@ -82,5 +82,7 @@
 
 ## Next: Phase 8 — Review and polish
 
-- Review the complete workflow and project documentation
-- Decide whether to keep or remove the Telegram chat ID from the exported workflow before sharing it
+- [x] Document Ollama setup and model availability in the README
+- [ ] Confirm explicit n8n retry counts for ingestion and briefing requests
+- [ ] Review the Telegram node's retry and failure behavior
+- [ ] Decide whether to keep or remove the Telegram chat ID from the exported workflow before sharing it
