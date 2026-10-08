@@ -85,4 +85,5 @@
 - [x] Document Ollama setup and model availability in the README
 - [x] Set explicit three-attempt retries for race lookup, ingestion, briefing, and Telegram delivery
 - [x] Review Telegram retry behavior and export a chat ID placeholder instead of a personal ID
+- [x] Re-import the updated workflow, verify the Docker API hostname and Telegram delivery, then export the sanitized workflow
 - [x] Document that local services are not configured for public internet exposure
