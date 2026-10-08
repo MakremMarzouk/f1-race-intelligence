@@ -17,6 +17,10 @@ n8n → FastAPI → FastF1
 
 Python will calculate race facts. AI will only explain validated facts. n8n will orchestrate the workflow.
 
+![F1 Race Intelligence Automation architecture overview](docs/images/f1-race-intelligence-architecture.png)
+
+> Diagram note: this is a conceptual overview, not an exact V1 deployment specification. The current n8n workflow is manually triggered; some API paths and database tables shown are illustrative, and PostgreSQL is exposed on host port `5434` (container port `5432`).
+
 ## Run locally
 
 1. Install and open [Ollama for macOS](https://ollama.com/download), if needed.

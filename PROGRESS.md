@@ -87,3 +87,4 @@
 - [x] Review Telegram retry behavior and export a chat ID placeholder instead of a personal ID
 - [x] Re-import the updated workflow, verify the Docker API hostname and Telegram delivery, then export the sanitized workflow
 - [x] Document that local services are not configured for public internet exposure
+- [x] Add the architecture illustration to the README with notes on conceptual details
