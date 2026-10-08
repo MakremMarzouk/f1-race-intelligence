@@ -74,7 +74,7 @@
     },
     {
       "parameters": {
-        "url": "http://host.docker.internal:8000/races/latest-completed",
+        "url": "http://api:8000/races/latest-completed",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -94,7 +94,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ 'http://host.docker.internal:8000/races/' + $json.year + '/' + $json.round + '/ingest' }}",
+        "url": "={{ 'http://api:8000/races/' + $json.year + '/' + $json.round + '/ingest' }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -107,6 +107,7 @@
       "name": "Ingest Selected Race",
       "retryOnFail": true,
       "waitBetweenTries": 2000,
+      "maxTries": 3,
       "onError": "continueErrorOutput"
     },
     {
@@ -152,7 +153,7 @@
     },
     {
       "parameters": {
-        "url": "={{ 'http://host.docker.internal:8000/races/' + $json.race.year + '/' + $json.race.round + '/briefing' }}",
+        "url": "={{ 'http://api:8000/races/' + $json.race.year + '/' + $json.race.round + '/briefing' }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -165,6 +166,7 @@
       "name": "Generate Race Briefing",
       "retryOnFail": true,
       "waitBetweenTries": 2000,
+      "maxTries": 3,
       "onError": "continueErrorOutput"
     },
     {
@@ -181,6 +183,9 @@
       ],
       "id": "1104a04a-41d6-44c7-bdb4-aa7aba4a2b2e",
       "name": "Send a text message",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "maxTries": 3,
       "webhookId": "c6013873-b9d2-4906-95fb-a647de04cff3",
       "credentials": {
         "telegramApi": {

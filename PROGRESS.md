@@ -80,9 +80,9 @@
 - [x] Verify an end-to-end Telegram delivery
 - [x] Run the test suite (8 passed, 2 dependency deprecation warnings)
 
-## Next: Phase 8 — Review and polish
+## Phase 8 — Review and polish
 
 - [x] Document Ollama setup and model availability in the README
-- [ ] Confirm explicit n8n retry counts for ingestion and briefing requests
-- [ ] Review the Telegram node's retry and failure behavior
-- [ ] Decide whether to keep or remove the Telegram chat ID from the exported workflow before sharing it
+- [x] Set explicit three-attempt retries for race lookup, ingestion, briefing, and Telegram delivery
+- [x] Review Telegram retry behavior and export a chat ID placeholder instead of a personal ID
+- [x] Document that local services are not configured for public internet exposure

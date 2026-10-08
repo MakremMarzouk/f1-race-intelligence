@@ -39,29 +39,43 @@ class F1DataService:
             include_testing=False,
         )
 
-        completed_races = schedule[
+        past_events = schedule[
             (schedule["RoundNumber"] > 0)
             & schedule["Session5DateUtc"].notna()
             & (schedule["Session5DateUtc"] < current_time)
         ]
 
-        if completed_races.empty:
-            raise ValueError(
-                f"No completed races found for year={selected_year}."
+        if not past_events.empty:
+            candidates = past_events.sort_values(
+                "Session5DateUtc",
+                ascending=False,
             )
+            for _, event in candidates.iterrows():
+                session = fastf1.get_session(
+                    selected_year,
+                    int(event["RoundNumber"]),
+                    "R",
+                )
+                session.load(
+                    laps=False,
+                    telemetry=False,
+                    weather=False,
+                    messages=False,
+                )
 
-        event = completed_races.sort_values(
-            "Session5DateUtc"
-        ).iloc[-1]
+                if self._has_classified_results(session.results):
+                    return {
+                        "year": selected_year,
+                        "round": int(event["RoundNumber"]),
+                        "name": str(event["EventName"]),
+                        "location": str(event["Location"]),
+                        "country": str(event["Country"]),
+                        "race_start_utc": event["Session5DateUtc"].isoformat(),
+                    }
 
-        return {
-            "year": selected_year,
-            "round": int(event["RoundNumber"]),
-            "name": str(event["EventName"]),
-            "location": str(event["Location"]),
-            "country": str(event["Country"]),
-            "race_start_utc": event["Session5DateUtc"].isoformat(),
-        }
+        raise ValueError(
+            f"No completed races with classified results found for year={selected_year}."
+        )
 
     def get_race_results(
         self,
@@ -78,15 +92,15 @@ class F1DataService:
             messages=False,
         )
 
+        if not self._has_classified_results(session.results):
+            raise ValueError(
+                f"Classified race results are not available for year={year}, round={round_number}."
+            )
+
         try:
             fastest_lap_times = self._fastest_lap_times_by_driver(session.laps)
         except DataNotLoadedError:
             fastest_lap_times = {}
-
-        if session.results.empty:
-            raise ValueError(
-                f"No race results found for year={year}, round={round_number}."
-            )
 
         return {
             "race": {
@@ -116,6 +130,14 @@ class F1DataService:
                 for _, result in session.results.iterrows()
             ],
         }
+
+    @staticmethod
+    def _has_classified_results(results: Any) -> bool:
+        return (
+            not results.empty
+            and "Position" in results.columns
+            and bool(results["Position"].eq(1).any())
+        )
 
     @staticmethod
     def _optional_int(value: Any) -> int | None:
